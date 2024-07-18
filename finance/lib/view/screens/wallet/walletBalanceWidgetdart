@@ -1,0 +1,101 @@
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import 'package:shared_preferences/shared_preferences.dart';
+
+// class UserCountWidget extends StatefulWidget {
+//   @override
+//   _UserCountWidgetState createState() => _UserCountWidgetState();
+// }
+
+// class _UserCountWidgetState extends State<UserCountWidget> {
+//   int remainingMoney = 0;
+//   bool isLoading = true;
+//   bool isError = false;
+
+//   Future<String?> _getToken() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     return prefs.getString('token');
+//   }
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     fetchUserCount();
+//   }
+
+//   Future<void> fetchUserCount() async {
+//     final url = Uri.parse('http://localhost:5000/v1/wallet/getMoney');
+//     String? token = await _getToken();
+//     var headers = {
+//       'Content-Type': 'application/json',
+//       'Authorization': 'Bearer $token',
+//     };
+//     try {
+//       final response = await http.get(url, headers: headers);
+
+//       if (response.statusCode == 200) {
+//         final data = json.decode(response.body);
+//         setState(() {
+//           remainingMoney = data['data']['remainingMoney'];
+//           isLoading = false;
+//         });
+//       } else {
+//         print(response.reasonPhrase);
+//         setState(() {
+//           isLoading = false;
+//           isError = true;
+//         });
+//       }
+//     } catch (error) {
+//       setState(() {
+//         isLoading = false;
+//         isError = true;
+//       });
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     var size = MediaQuery.of(context).size;
+//     return isLoading
+//         ? const Center(child: CircularProgressIndicator())
+//         : isError
+//             ? const Text('Error fetching user count')
+//             : Column(
+//                 children: [
+//                   Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+                      
+//                         child: Container(
+//                           height: 150,
+//                           width: size.width * 9,
+//                           decoration: BoxDecoration(
+//                             color: const Color.fromARGB(255, 171, 212, 218),
+//                             borderRadius: BorderRadius.circular(20),
+//                           ),
+//                           child: Column(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               const Icon(Icons.people),
+//                               Text("Total Users"),
+//                               Text(
+//                                 "$remainingMoney",
+//                                 style: const TextStyle(
+//                                   fontSize: 20,
+//                                   fontWeight: FontWeight.bold,
+//                                   color: Colors.black,
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+                      
+//                     ],
+//                   )
+//                 ],
+//               );
+//   }
+// }
