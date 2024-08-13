@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:finance/view/widgets/toaster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddFund extends StatefulWidget {
   const AddFund({Key? key}) : super(key: key);
@@ -12,69 +15,28 @@ class AddFund extends StatefulWidget {
 
 class _AddFundState extends State<AddFund> {
   TextEditingController amountController = TextEditingController();
+  Future<String?> _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
 
-//   Future<void> addFund() async {
-//     // if (amountController.text.isEmpty) {
-//     //   // Show an error if the amount is empty
-//     //   ScaffoldMessenger.of(context).showSnackBar(
-//     //     const SnackBar(
-//     //         content: Text('Amount is required',
-//     //             style: TextStyle(color: Colors.red))),
-//     //   );
-//     //   return;
-//     // }
-
-// var request = http.Request('GET', Uri.parse('https://finance-075c.onrender.com/pay'));
-//     // request.body = json.encode({"amount": amountController.text});
-//     var headers = {'Content-Type': 'application/json'};
-//     // var request = http.Request('POST', Uri.parse('http://localhost:5000/pay'));
-//     // request.body = json.encode({"amount": amountController.text});
-//     request.headers.addAll(headers);
-
-//     try {
-//       http.StreamedResponse response = await request.send();
-
-//       if (response.statusCode == 200) {
-//         String responseBody = await response.stream.bytesToString();
-//         var responseData = json.decode(responseBody);
-
-//         // Extract and print the message from the response
-//         String message = responseData['message'];
-//         print("Success: $message");
-
-//         // Display a toast or dialog with the message (optional)
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(
-//               content: Text(message, style: const TextStyle(color: Colors.green))),
-//         );
-//       } else {
-//         String responseBody = await response.stream.bytesToString();
-//         var responseData = json.decode(responseBody);
-
-//         // Extract and print the error message from the response
-//         String errorMessage = responseData['error'] ?? 'Unknown error';
-//         print("Error: $errorMessage");
-
-//         // Display a toast or dialog with the error message (optional)
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(
-//               content: Text(errorMessage, style: const TextStyle(color: Colors.red))),
-//         );
-//       }
-//     } catch (e) {
-//       print('===============Error sending request: $e');
-
-//       // Display a toast or dialog with the error message (optional)
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(
-//             content: Text('Error: $e', style: const TextStyle(color: Colors.red))),
-//       );
-//     }
-//   }
 
   void fetchData() async {
-    var url = Uri.parse('https://finance-075c.onrender.com/pay');
-    var headers = {'Content-Type': 'application/json'};
+    String? token = await _getToken();
+    if (token == null) {
+      showToast("Error: No token found. Please log in again.", Colors.red);
+      return;
+    }
+
+    var headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    var amount = amountController.text;
+    var url = Uri.parse('http://localhost:5000/pay?amount=$amount');
+    // var headers = {
+    //   'Content-Type': 'application/json',
+    // };
 
     try {
       var response = await http.get(url, headers: headers);
@@ -83,7 +45,32 @@ class _AddFundState extends State<AddFund> {
         var responseData = json.decode(response.body);
         // Process responseData as needed
         print('Response data: $responseData');
+
+        // Extract the redirect URL
+        if (responseData['success'] == true &&
+            responseData.containsKey('redirectUrl')) {
+          var redirectUrl = responseData['redirectUrl'];
+
+          // Redirect to the URL
+          if (await canLaunch(redirectUrl)) {
+            await launch(redirectUrl);
+          } else {
+            throw 'Could not launch $redirectUrl';
+          }
+        } else {
+          print('No redirect URL found in the response');
+        }
       } else {
+        var responseBody = response.body;
+        var responseData = json.decode(responseBody);
+        String message = responseData['error']; // Extract the error message
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: Colors.red,
+          ),
+        );
         print('Request failed with status: ${response.statusCode}');
       }
     } catch (e) {
@@ -124,7 +111,6 @@ class _AddFundState extends State<AddFund> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // addFund();
                 fetchData();
               },
               child: const Text('Add'),

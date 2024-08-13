@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:finance/view/screens/addFund/addMoneyScreen.dart';
+import 'package:finance/view/screens/home/qwert.dart';
 import 'package:finance/view/screens/home/returnPolicyScreen.dart';
 import 'package:finance/view/screens/wallet/walletScreen.dart';
 import 'package:finance/view/screens/withdrawelScreen.dart';
@@ -34,8 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http
-          .get(Uri.parse('https://finance-075c.onrender.com/v1/banner/allBanner'));
+      final response = await http.get(
+          Uri.parse('https://finance-075c.onrender.com/v1/banner/allBanner'));
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         setState(() {
@@ -75,6 +76,15 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // InkWell(
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => WalletAndWithdrawScreen()),
+                  //       );
+                  //     },
+                  //     child: Text("xyz")),
                   const SizedBox(height: 20),
                   imgList.isEmpty
                       ? const Center(child: CircularProgressIndicator())
@@ -282,11 +292,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: const Center(
                 child: Text(
-                  "Alles mogelijk service pvt ltd",
+                  "© 2024 Alles mogelijk service pvt ltd.All rights reserved.",
                   style: TextStyle(
                       decoration: TextDecoration.underline,
                       color: Colors.white,
-                      fontSize: 20),
+                      fontSize: 15),
                 ),
               ),
             ),

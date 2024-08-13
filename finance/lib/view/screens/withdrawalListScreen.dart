@@ -34,7 +34,8 @@ class _WithdrawalListScreenState extends State<WithdrawalListScreen> {
     };
 
     var response = await http.get(
-      Uri.parse('https://finance-075c.onrender.com/v1/withDrow/getWithdrowforUser'),
+      Uri.parse(
+          'https://finance-075c.onrender.com/v1/withDrow/getWithdrowforUser'),
       headers: headers,
     );
 
@@ -115,8 +116,9 @@ class _WithdrawalListScreenState extends State<WithdrawalListScreen> {
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+                // scrollDirection: Axis.horizontal,
                 child: DataTable(
+                  columnSpacing: 12,
                   columns: const [
                     DataColumn(
                         label: Text(
@@ -135,9 +137,12 @@ class _WithdrawalListScreenState extends State<WithdrawalListScreen> {
                   ],
                   rows: withdrawalData.map((withdrawal) {
                     return DataRow(cells: [
-                      DataCell(Text(withdrawal['CreatedDate']
-                          .split('T')
-                          .first)), // Format the date
+                      // DataCell(Text(withdrawal['CreatedDate']
+                      //     .split('T')
+                      //     .first)),
+                      DataCell(Text(
+                        _formatDate(withdrawal['CreatedDate']),
+                      )), // Format the date
                       DataCell(Text(withdrawal['Amount'].toString())),
                       DataCell(
                         Text(
@@ -161,5 +166,11 @@ class _WithdrawalListScreenState extends State<WithdrawalListScreen> {
         ],
       ),
     );
+  }
+
+  String _formatDate(String dateString) {
+    // Format date string to a readable format
+    DateTime dateTime = DateTime.parse(dateString);
+    return '${dateTime.day}-${dateTime.month}-${dateTime.year}';
   }
 }

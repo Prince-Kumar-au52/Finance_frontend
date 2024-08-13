@@ -64,3 +64,36 @@ class _QrScreenState extends State<QrScreen> {
     );
   }
 }
+// void fetchData() async {
+  //   var url = Uri.parse('http://localhost:5000/pay');
+  //   var headers = {'Content-Type': 'application/json'};
+
+  //   try {
+  //     var response = await http.get(url, headers: headers);
+
+  //     if (response.statusCode == 200) {
+  //       var responseData = json.decode(response.body);
+  //       // Process responseData as needed
+  //       print('Response data: $responseData');
+
+  //       // Extract the redirect URL
+  //       if (responseData['success'] == true &&
+  //           responseData.containsKey('redirectUrl')) {
+  //         var redirectUrl = responseData['redirectUrl'];
+
+  //         // Redirect to the URL
+  //         if (await canLaunch(redirectUrl)) {
+  //           await launch(redirectUrl);
+  //         } else {
+  //           throw 'Could not launch $redirectUrl';
+  //         }
+  //       } else {
+  //         print('No redirect URL found in the response');
+  //       }
+  //     } else {
+  //       print('Request failed with status: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     print('Error sending request: $e');
+  //   }
+  // }

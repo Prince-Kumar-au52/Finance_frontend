@@ -1,0 +1,4 @@
+#Thu Aug 08 07:36:01 IST 2024
+base.0=C\:\\Users\\shobh\\Desktop\\Finance_frontend\\finance\\build\\app\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
